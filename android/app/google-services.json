@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "515391859907",
+    "firebase_url": "https://colombodb.firebaseio.com",
+    "project_id": "colombodb",
+    "storage_bucket": "colombodb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515391859907:android:c4bc5f8874de347a21c676",
+        "android_client_info": {
+          "package_name": "com.colombo.colombo_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515391859907-rit03cudnbp6m5o8so2hds31st22ujd1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxEeGQZI8UBmbq44FxcADofjxFVtYYcyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515391859907-rit03cudnbp6m5o8so2hds31st22ujd1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515391859907:android:d864b6f5c102b9f021c676",
+        "android_client_info": {
+          "package_name": "org.world.colomboapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515391859907-rit03cudnbp6m5o8so2hds31st22ujd1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxEeGQZI8UBmbq44FxcADofjxFVtYYcyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515391859907-rit03cudnbp6m5o8so2hds31st22ujd1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515391859907:android:2b93b3ec88f2225721c676",
+        "android_client_info": {
+          "package_name": "org.world.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515391859907-rit03cudnbp6m5o8so2hds31st22ujd1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxEeGQZI8UBmbq44FxcADofjxFVtYYcyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515391859907-rit03cudnbp6m5o8so2hds31st22ujd1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
