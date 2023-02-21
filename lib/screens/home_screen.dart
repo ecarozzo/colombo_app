@@ -1,15 +1,18 @@
+import 'package:colombo_app/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import '../services/auth_methods.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
-  State<Home> createState() => _NewHomeState();
+  State<Home> createState() => _HomeState();
 }
 
-class _NewHomeState extends State<Home> {
+class _HomeState extends State<Home> {
   TextEditingController textEditingController = TextEditingController();
 
   getOccupazione() async {
@@ -26,16 +29,21 @@ class _NewHomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Colombo Home"),
+        title: Text("Date Libere"),
         actions: <Widget>[
           IconButton(
             icon: Icon(
               Icons.exit_to_app,
               color: Colors.white,
             ),
-            onPressed: () {
-              FirebaseAuth auth = FirebaseAuth.instance;
-              auth.signOut().then((res) {});
+            onPressed: () async {
+              setState(() {
+              });
+              await Authentication.signOut(context: context);
+              setState(() {
+              });
+              Navigator.of(context)
+                  .pushReplacement(_routeToSignInScreen());
             },
           )
         ],
@@ -48,7 +56,7 @@ class _NewHomeState extends State<Home> {
                 List<DataRow> rows = [];
                 snapshot.data.docs.forEach((doc) {
                   rows.add(DataRow(cells: <DataCell>[
-                    DataCell(Text(doc.id)),
+                    DataCell(Text(getFormattedData(doc.data()["data"]))),
                     DataCell(
                       Checkbox(
                         checkColor: Colors.white,
@@ -86,6 +94,37 @@ class _NewHomeState extends State<Home> {
             }),
       ),
     );
+  }
+
+  Route _routeToSignInScreen() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => LoginScreen(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+  String getFormattedData(var date){
+    // String locale = Localizations.localeOf(context).languageCode;
+    // DateTime now = new DateTime.now();
+    // String dayOfWeek = DateFormat.EEEE(locale).format(now);
+    // String dayMonth = DateFormat.MMMMd(locale).format(now);
+    // String year = DateFormat.y(locale).format(now);
+
+    final Timestamp timestamp = date as Timestamp;
+    final DateTime dateTime = timestamp.toDate();
+    return DateFormat('EEEE dd-MM-yyyy').format(dateTime);
   }
 
   Color getColor(Set<MaterialState> states) {
