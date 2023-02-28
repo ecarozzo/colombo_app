@@ -1,6 +1,8 @@
 import 'package:colombo_app/services/mail_login.dart';
+import 'package:colombo_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 
+import '../constant/screen_name.dart';
 import '../services/auth_methods.dart';
 import '../services/google_login.dart';
 
@@ -98,10 +100,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Non riesci ad entrare?", style: _textStyleGrey),
+                      Text("Non sei registrato?", style: _textStyleGrey),
                       Container(
                         child: TextButton(
-                          onPressed: (null),
+                          onPressed: () {
+                            Navigator.of(context).push(routeToScreen(RouteSettings(name: SignupScreenRoute),context));
+                          },
                           child: Text('Tocca qui.', style: _textStyleGrey),
                         ),
                       ),
