@@ -1,12 +1,21 @@
+import 'dart:async';
+
 import 'package:colombo_app/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../screens/home_screen.dart';
+import 'package:local_session_timeout/local_session_timeout.dart';
+
+import '../constant/screen_name.dart';
 
 class Authentication {
+  StreamController<SessionState> sessionStateStream;
+
+  Authentication(
+      {Key? key, required this.sessionStateStream});
+
   static Future<FirebaseApp> initializeFirebase({
     required BuildContext context,
   }) async {
@@ -15,11 +24,7 @@ class Authentication {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => Home(),
-        ),
-      );
+      Navigator.pushNamed(context, homeScreenRoute);
     }
     return firebaseApp;
   }
@@ -69,16 +74,18 @@ class Authentication {
     }
   }
 
-  static Future<void> signOut({required BuildContext context}) async {
+  Future<void> signOut({required BuildContext context}) async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     try {
       if (!kIsWeb) {
         await googleSignIn.signOut();
       }
-      await FirebaseAuth.instance.signOut();
+      if (FirebaseAuth.instance.currentUser != null) {
+        sessionStateStream.add(SessionState.stopListening);
+        await FirebaseAuth.instance.signOut();}
     } catch (e) {
-      showSnackBar('Error signing out. Try again.', context);
+      showSnackBar('Errore di Logout.', context);
     }
   }
 
@@ -86,7 +93,7 @@ class Authentication {
     required String email,
     required String password,
   }) async {
-    String result = 'Some error occurred';
+    String result = 'Errore di Login.';
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
         await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);

@@ -1,17 +1,33 @@
+import 'dart:async';
+
 import 'package:colombo_app/services/mail_login.dart';
-import 'package:colombo_app/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:local_session_timeout/local_session_timeout.dart';
 
 import '../constant/screen_name.dart';
 import '../services/auth_methods.dart';
 import '../services/google_login.dart';
+import '../utils/utils.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignInScreen extends StatefulWidget {
+  final StreamController<SessionState> sessionStateStream;
+  final String loggedOutReason;
+
+  const SignInScreen({
+    Key? key,
+    required this.sessionStateStream,
+    this.loggedOutReason = "",
+  }) : super(key: key);
+
   @override
-  _LoginScreenState createState() => new _LoginScreenState();
+  _SignInScreenState createState() => new _SignInScreenState(loggedOutReason);
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignInScreenState extends State<SignInScreen> {
+  _SignInScreenState(String loggedOutReason) {
+    if (loggedOutReason != "") scheduleMicrotask(() => showSnackBar(widget.loggedOutReason, context));
+  }
+
   final TextEditingController _emailIdController = new TextEditingController();
   final TextEditingController _passwordController = new TextEditingController();
 
@@ -27,10 +43,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      bottomNavigationBar: _bottomBar(),
-      body: _body(),
-    );
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+          body: _body(),
+          bottomNavigationBar: _bottomBar(),
+        ));
   }
 
   Widget _body() {
@@ -51,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
               if (snapshot.hasError) {
                 return Text('Errore collegamento database');
               } else if (snapshot.connectionState == ConnectionState.done) {
-                return MailSignInModule();
+                return MailSignInModule(sessionStateStream: widget.sessionStateStream);
               }
               return CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
@@ -67,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
               if (snapshot.hasError) {
                 return Text('Errore collegamento database');
               } else if (snapshot.connectionState == ConnectionState.done) {
-                return GoogleSignInButton();
+                return GoogleSignInButton(sessionStateStream: widget.sessionStateStream);
               }
               return CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
@@ -104,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Container(
                         child: TextButton(
                           onPressed: () {
-                            Navigator.of(context).push(routeToScreen(RouteSettings(name: SignupScreenRoute),context));
+                            Navigator.pushNamed(context, signUpScreenRoute);
                           },
                           child: Text('Tocca qui.', style: _textStyleGrey),
                         ),

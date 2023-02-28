@@ -1,28 +1,34 @@
-import 'package:colombo_app/screens/login_screen.dart';
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:local_session_timeout/local_session_timeout.dart';
+import '../constant/screen_name.dart';
 import '../services/auth_methods.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  final StreamController<SessionState> sessionStateStream;
+
+  const HomeScreen({Key? key, required this.sessionStateStream}) : super(key: key);
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeState extends State<Home> {
-  TextEditingController textEditingController = TextEditingController();
-
-  getOccupazione() async {
-    QuerySnapshot data = await FirebaseFirestore.instance
-        .collectionGroup('postazioni')
+class _HomeScreenState extends State<HomeScreen> {
+  getUserData() async {
+    return await FirebaseFirestore.instance
+        .collection('users_database')
         .where('mail', isEqualTo: FirebaseAuth.instance.currentUser?.email)
         .get();
-    return FirebaseFirestore.instance
-        .collection(data.docs.first.reference.path + "/database_occupazione")
-        .orderBy("data")
+  }
+
+  getUserPrenotazioni() async {
+    return await FirebaseFirestore.instance
+        .collectionGroup('postazioni')
+        .where('mail', isEqualTo: FirebaseAuth.instance.currentUser?.email)
         .get();
   }
 
@@ -37,85 +43,98 @@ class _HomeState extends State<Home> {
               color: Colors.white,
             ),
             onPressed: () async {
-              setState(() {
-              });
-              await Authentication.signOut(context: context);
-              setState(() {
-              });
-              Navigator.of(context)
-                  .pushReplacement(_routeToSignInScreen());
+              setState(() {});
+              await Authentication(sessionStateStream: widget.sessionStateStream).signOut(context: context);
+              setState(() {});
+              Navigator.pushNamed(context, signInScreenRoute);
             },
           )
         ],
       ),
       body: Center(
-        child: FutureBuilder(
-            future: getOccupazione(),
-            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              if (snapshot.hasData) {
-                List<DataRow> rows = [];
-                snapshot.data.docs.forEach((doc) {
-                  rows.add(DataRow(cells: <DataCell>[
-                    DataCell(Text(getFormattedData(doc.data()["data"]))),
-                    DataCell(
-                      Checkbox(
-                        checkColor: Colors.white,
-                        fillColor: MaterialStateProperty.resolveWith(getColor),
-                        value: doc.data()["libero"],
-                        onChanged: (bool? value) {
-                          setState(() {
-                            FirebaseFirestore.instance.doc(doc.reference.path).update(({'libero': value}));
-                          });
-                        },
-                      ),
-                    ),
-                    DataCell(Checkbox(
-                      value: doc.data()["venduto"],
-                      onChanged: (bool? value) {},
-                    ))
-                  ]));
-                });
-                return SingleChildScrollView(child: DataTable(columns: const <DataColumn>[
-                  DataColumn(
-                    label: Text('Data'),
-                  ),
-                  DataColumn(
-                    label: Text('Libero'),
-                  ),
-                  DataColumn(
-                    label: Text('Venduto'),
-                  ),
-                ], rows: rows));
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }),
+          child: Row(
+        children: [
+          FutureBuilder(
+              future: getUserData(),
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                if (snapshot.hasData) {
+                  String data ="";
+                  snapshot.data.docs.forEach((doc) {
+                    data = doc.data()["nome"];
+                  });
+                  return Text(data);
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }),
+          FutureBuilder(
+              future: getUserPrenotazioni(),
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                if (snapshot.hasData) {
+                  List<DataRow> rows = [];
+                  snapshot.data.docs.forEach((doc) {
+                    String path = doc.reference.path;
+
+                    if (path.startsWith("/")) {
+                      path = path.substring(1);
+                    }
+                    List<String> parts = path.split("/");
+
+                    rows.add(DataRow(cells: <DataCell>[
+                      DataCell(Text(parts[1] + " " + parts[3])),
+                    ]));
+                  });
+                  return SingleChildScrollView(
+                      child: DataTable(columns: const <DataColumn>[
+                    DataColumn(
+                      label: Text('Data'),
+                    )
+                  ], rows: rows));
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }),
+        ],
+      )),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text('Drawer Header'),
+            ),
+            ListTile(
+              title: const Text('Item 1'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Item 2'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Route _routeToSignInScreen() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => LoginScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = Offset(-1.0, 0.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-
-        var tween =
-        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-  }
-
-  String getFormattedData(var date){
+  String getFormattedData(var date) {
     // String locale = Localizations.localeOf(context).languageCode;
     // DateTime now = new DateTime.now();
     // String dayOfWeek = DateFormat.EEEE(locale).format(now);
@@ -137,75 +156,5 @@ class _HomeState extends State<Home> {
       return Colors.blue;
     }
     return Colors.red;
-  }
-}
-
-class NavigateDrawer extends StatefulWidget {
-  final String uid;
-  final String path;
-
-  NavigateDrawer({required Key key, required this.uid, required this.path}) : super(key: key);
-
-  @override
-  _NavigateDrawerState createState() => _NavigateDrawerState();
-}
-
-class _NavigateDrawerState extends State<NavigateDrawer> {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          UserAccountsDrawerHeader(
-            accountEmail: FutureBuilder(
-                future: FirebaseFirestore.instance.doc(widget.path).get(),
-                builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(snapshot.data?['mail']);
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                }),
-            accountName: FutureBuilder(
-                future: FirebaseFirestore.instance.doc(widget.path).get(),
-                builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(snapshot.data?['nome']);
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                }),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-            ),
-          ),
-          ListTile(
-            leading: new IconButton(
-              icon: new Icon(Icons.home, color: Colors.black),
-              onPressed: () => null,
-            ),
-            title: Text('Home'),
-            onTap: () {
-              print(widget.uid);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Home()),
-              );
-            },
-          ),
-          ListTile(
-            leading: new IconButton(
-              icon: new Icon(Icons.settings, color: Colors.black),
-              onPressed: () => null,
-            ),
-            title: Text('Settings'),
-            onTap: () {
-              print(widget.uid);
-            },
-          ),
-        ],
-      ),
-    );
   }
 }
