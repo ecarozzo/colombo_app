@@ -25,14 +25,15 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   _SignInScreenState(String loggedOutReason) {
-    if (loggedOutReason != "") scheduleMicrotask(() => showSnackBar(widget.loggedOutReason, context));
+    if (loggedOutReason != "") {
+      scheduleMicrotask(() => showSnackBar(widget.loggedOutReason, context));
+    }
   }
 
-  final TextEditingController _emailIdController = new TextEditingController();
-  final TextEditingController _passwordController = new TextEditingController();
+  final TextEditingController _emailIdController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  var _textStyleBlack = new TextStyle(fontSize: 12.0, color: Colors.black);
-  var _textStyleGrey = new TextStyle(fontSize: 12.0, color: Colors.grey);
+  final _textStyleGrey = const TextStyle(fontSize: 12.0, color: Colors.grey);
 
   @override
   void dispose() {
@@ -55,23 +56,26 @@ class _SignInScreenState extends State<SignInScreen> {
     return Container(
       constraints: BoxConstraints.expand(),
       decoration: const BoxDecoration(
-        image: DecorationImage(image: AssetImage("assets/images/sfondo_login.jpg"), fit: BoxFit.cover),
+        image: DecorationImage(
+            image: AssetImage("assets/images/sfondo_login.jpg"),
+            fit: BoxFit.cover),
       ),
       alignment: Alignment.center,
-      padding: EdgeInsets.all(25.0),
+      padding: const EdgeInsets.all(25.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Spacer(flex: 5),
+          const Spacer(flex: 5),
           FutureBuilder(
             future: Authentication.initializeFirebase(context: context),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Text('Errore collegamento database');
               } else if (snapshot.connectionState == ConnectionState.done) {
-                return MailSignInModule(sessionStateStream: widget.sessionStateStream);
+                return MailSignInModule(
+                    sessionStateStream: widget.sessionStateStream);
               }
-              return CircularProgressIndicator(
+              return const CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
                   Colors.lightBlue,
                 ),
@@ -85,7 +89,8 @@ class _SignInScreenState extends State<SignInScreen> {
               if (snapshot.hasError) {
                 return Text('Errore collegamento database');
               } else if (snapshot.connectionState == ConnectionState.done) {
-                return GoogleSignInButton(sessionStateStream: widget.sessionStateStream);
+                return GoogleSignInButton(
+                    sessionStateStream: widget.sessionStateStream);
               }
               return CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
