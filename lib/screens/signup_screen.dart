@@ -11,14 +11,13 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _emailIdController = new TextEditingController();
   final TextEditingController _passwordController = new TextEditingController();
   final TextEditingController _nomeController = new TextEditingController();
   final TextEditingController _cognomeController = new TextEditingController();
   final TextEditingController _telefonoController = new TextEditingController();
-  final TextEditingController _indirizzoController = new TextEditingController();
+  final TextEditingController _indirizzoController =
+      new TextEditingController();
 
   var _textStyleBlack = new TextStyle(fontSize: 12.0, color: Colors.black);
   var _textStyleGrey = new TextStyle(fontSize: 12.0, color: Colors.grey);
@@ -48,122 +47,126 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Container(
         constraints: BoxConstraints.expand(),
         decoration: const BoxDecoration(
-          image: DecorationImage(image: AssetImage("assets/images/sfondo_login.jpg"), fit: BoxFit.cover),
+          image: DecorationImage(
+              image: AssetImage("assets/images/sfondo_login.jpg"),
+              fit: BoxFit.cover),
         ),
         alignment: Alignment.center,
         padding: EdgeInsets.all(25.0),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          Container(
-            child: new TextField(
-              controller: _emailIdController,
-              decoration: new InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.6),
-                  hintText: 'Email',
-                  border: new OutlineInputBorder(
-                    borderSide: new BorderSide(color: Colors.black),
-                  ),
-                  isDense: true),
-              style: _textStyleBlack,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 5.0),
-            child: TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.6),
-                  hintText: 'Password',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  isDense: true),
-              style: _textStyleBlack,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 5.0),
-            child: TextField(
-              controller: _nomeController,
-              decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.6),
-                  hintText: 'Nome',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  isDense: true),
-              style: _textStyleBlack,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 5.0),
-            child: TextField(
-              controller: _cognomeController,
-              decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.6),
-                  hintText: 'Cognome',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  isDense: true),
-              style: _textStyleBlack,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 5.0),
-            child: TextField(
-              controller: _telefonoController,
-              decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.6),
-                  hintText: 'Telefono',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  isDense: true),
-              style: _textStyleBlack,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 5.0),
-            child: TextField(
-              controller: _indirizzoController,
-              decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.6),
-                  hintText: 'Indirizzo',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  isDense: true),
-              style: _textStyleBlack,
-            ),
-          ),
-          GestureDetector(
-            onTap: _singUpUser,
-            child: Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(top: 10.0),
-              width: 500.0,
-              height: 40.0,
-              child: _isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.lightBlueAccent,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                child: new TextField(
+                  controller: _emailIdController,
+                  decoration: new InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.6),
+                      hintText: 'Email',
+                      border: new OutlineInputBorder(
+                        borderSide: new BorderSide(color: Colors.black),
                       ),
-                    )
-                  : Text(
-                      "Registrati",
-                      style: TextStyle(color: Colors.white),
-                    ),
-              color: Colors.blue,
-            ),
-          )
-        ]));
+                      isDense: true),
+                  style: _textStyleBlack,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 5.0),
+                child: TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.6),
+                      hintText: 'Password',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      isDense: true),
+                  style: _textStyleBlack,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 5.0),
+                child: TextField(
+                  controller: _nomeController,
+                  decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.6),
+                      hintText: 'Nome',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      isDense: true),
+                  style: _textStyleBlack,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 5.0),
+                child: TextField(
+                  controller: _cognomeController,
+                  decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.6),
+                      hintText: 'Cognome',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      isDense: true),
+                  style: _textStyleBlack,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 5.0),
+                child: TextField(
+                  controller: _telefonoController,
+                  decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.6),
+                      hintText: 'Telefono',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      isDense: true),
+                  style: _textStyleBlack,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 5.0),
+                child: TextField(
+                  controller: _indirizzoController,
+                  decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.6),
+                      hintText: 'Indirizzo',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      isDense: true),
+                  style: _textStyleBlack,
+                ),
+              ),
+              GestureDetector(
+                onTap: _singUpUser,
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(top: 10.0),
+                  width: 500.0,
+                  height: 40.0,
+                  child: _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.lightBlueAccent,
+                          ),
+                        )
+                      : Text(
+                          "Registrati",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                  color: Colors.blue,
+                ),
+              )
+            ]));
   }
 
   Widget _bottomBar() {

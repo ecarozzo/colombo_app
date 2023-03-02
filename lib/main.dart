@@ -18,12 +18,12 @@ void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
   FlutterNativeSplash.remove();
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -46,21 +46,27 @@ class _MyAppState extends State<MyApp> {
       // stop listening, as user will already be in auth page
       sessionStateStream.add(SessionState.stopListening);
       if (timeoutEvent == SessionTimeoutState.userInactivityTimeout) {
-        Authentication(sessionStateStream: sessionStateStream).signOut(context: context).then((value) => {
-              _navigator.push(PageTransition(
-                child: SignInScreen(
-                    sessionStateStream: sessionStateStream, loggedOutReason: "Scollegato per inattività"),
-                type: PageTransitionType.leftToRight,
-              ))
-            });
+        Authentication(sessionStateStream: sessionStateStream)
+            .signOut(context: context)
+            .then((value) => {
+                  _navigator.push(PageTransition(
+                    child: SignInScreen(
+                        sessionStateStream: sessionStateStream,
+                        loggedOutReason: "Scollegato per inattività"),
+                    type: PageTransitionType.leftToRight,
+                  ))
+                });
       } else if (timeoutEvent == SessionTimeoutState.appFocusTimeout) {
-        Authentication(sessionStateStream: sessionStateStream).signOut(context: context).then((value) => {
-              _navigator.push(PageTransition(
-                child: SignInScreen(
-                    sessionStateStream: sessionStateStream, loggedOutReason: "Scollegato per inattività"),
-                type: PageTransitionType.leftToRight,
-              ))
-            });
+        Authentication(sessionStateStream: sessionStateStream)
+            .signOut(context: context)
+            .then((value) => {
+                  _navigator.push(PageTransition(
+                    child: SignInScreen(
+                        sessionStateStream: sessionStateStream,
+                        loggedOutReason: "Scollegato per inattività"),
+                    type: PageTransitionType.leftToRight,
+                  ))
+                });
       }
     });
 
@@ -94,7 +100,7 @@ class _MyAppState extends State<MyApp> {
               );
             case signUpScreenRoute:
               return PageTransition(
-                child: SignUpScreen(),
+                child: const SignUpScreen(),
                 type: PageTransitionType.leftToRight,
                 settings: settings,
               );
